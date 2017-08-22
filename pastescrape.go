@@ -155,8 +155,6 @@ func FetchWorker(s StorageModule) {
 		}
 
 		if !s.Check(paste) {
-			// DEBUG
-			log.Printf("Already fetched, continue")
 			continue
 		}
 
