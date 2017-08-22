@@ -1,15 +1,20 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 	"os/signal"
 )
 
 func main() {
+	elasticURL := flag.String("url", "http://localhost:9200", "elastic search api url")
+	index := flag.String("index", "pastebin", "pastebin")
+	flag.Parse()
+
 	e := &ElasticStorageModule{
-		index:      "pastebin",
-		elasticURL: "http://elk.lab",
+		index:      *index,
+		elasticURL: *elasticURL,
 	}
 
 	go FetchWorker(e)
@@ -21,6 +26,7 @@ func main() {
 		<-c
 		stopFetchWorker = true
 		stopQueryWorker = true
+		log.Print("Shutting down... Please Wait")
 	}()
 
 	log.Print("Scraper running")

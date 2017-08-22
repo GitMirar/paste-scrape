@@ -86,10 +86,15 @@ func QueryWorker() {
 			continue
 		}
 		for _, paste := range pastes {
-			chanPasteMeta <- paste
+			select {
+			case chanPasteMeta <- paste:
+			default:
+				log.Printf("Pipeling stalling, dropping pastes...")
+			}
 		}
 
-		time.Sleep(5000 * time.Millisecond)
+		// fetch every 30 seconds the most recent 100 pastes
+		time.Sleep(30000 * time.Millisecond)
 
 		if stopQueryWorker {
 			break
@@ -124,6 +129,7 @@ type StorageModule interface {
 	StorePaste(paste PasteFull)
 	Initialize() error
 	Destroy() error
+	Check(paste PasteMeta) bool
 }
 
 var stopFetchWorker = false
@@ -136,7 +142,24 @@ func FetchWorker(s StorageModule) {
 	}
 
 	for {
-		paste := <-chanPasteMeta
+		if stopFetchWorker {
+			break
+		}
+		time.Sleep(500 * time.Millisecond)
+
+		var paste PasteMeta
+		select {
+		case paste = <-chanPasteMeta:
+		default:
+			continue
+		}
+
+		if !s.Check(paste) {
+			// DEBUG
+			log.Printf("Already fetched, continue")
+			continue
+		}
+
 		pasteData, err := FetchPaste(paste)
 		if err != nil {
 			log.Printf("Could not fetch paste due to %v", err)
@@ -164,10 +187,6 @@ func FetchWorker(s StorageModule) {
 			RFC3339:   rfc3339Time,
 		}
 		go s.StorePaste(pasteFull)
-		if stopFetchWorker {
-			break
-		}
-		time.Sleep(1000 * time.Millisecond)
 	}
 
 	err = s.Destroy()

@@ -52,6 +52,27 @@ func (e *ElasticStorageModule) StorePaste(paste PasteFull) {
 	}
 }
 
+func (e *ElasticStorageModule) Check(paste PasteMeta) bool {
+	q := elastic.NewMatchQuery("_id", paste.Key)
+
+	searchResult, err := e.client.Search().
+		Index(e.index).
+		Query(q).
+		Pretty(true).
+		Do(context.Background())
+	if err != nil {
+		log.Printf("Could not check paste due to %v", err)
+		return true
+	}
+	_ = searchResult
+
+	if searchResult.TotalHits() > 0 {
+		return false
+	}
+
+	return true
+}
+
 func (e *ElasticStorageModule) Destroy() error {
 	_, err := e.client.Flush().Index(e.index).Do(context.Background())
 	if err != nil {
