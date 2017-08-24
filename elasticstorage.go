@@ -110,6 +110,7 @@ func (e *ElasticStorageModule) Initialize() error {
 func (e *ElasticStorageModule) StorePaste(paste PasteFull) {
 	if e.dailyIndexes && time.Since(e.lastChk) > 12*time.Hour {
 		e.makeIndexIfNotExists()
+		e.lastChk = time.Now()
 	}
 	_, err := e.client.Index().
 		Index(e.useIndex).
