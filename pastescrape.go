@@ -39,7 +39,7 @@ type PasteFull struct {
 // Meta Information: https://pastebin.com/api_scraping.php
 // Content: http://pastebin.com/api_scrape_item.php
 
-const api_url = "https://pastebin.com/api_scraping.php"
+const api_url = "https://scrape.pastebin.com/api_scraping.php"
 
 func QueryPastes() ([]PasteMeta, error) {
 	url := api_url
