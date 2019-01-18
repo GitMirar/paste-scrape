@@ -247,7 +247,7 @@ func (w *FetchWorker) doFetch() {
 			}
 
 			if w.PastebinURLReplacement != "" {
-				paste.ScrapeURL = strings.Replace(paste.ScrapeURL, "pastebin.com",
+				paste.ScrapeURL = strings.Replace(paste.ScrapeURL, "scrape.pastebin.com",
 					w.PastebinURLReplacement, -1)
 			}
 
