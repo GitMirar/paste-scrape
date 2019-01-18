@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestElasticStorageModule(t *testing.T) {
+func _TestElasticStorageModule(t *testing.T) {
 	e := ElasticStorageModule{
 		index:      "pastebin-test",
 		elasticURL: "http://elk.lab",
