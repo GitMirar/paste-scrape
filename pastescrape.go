@@ -48,6 +48,7 @@ type PasteFull struct {
 func QueryPastes(server string) ([]PasteMeta, error) {
 	req, err := http.NewRequest("GET",
 		fmt.Sprintf("https://%s/api_scraping.php?limit=100", server), nil)
+
 	if err != nil {
 		log.Fatal("Could not build http request", err)
 		return nil, err
